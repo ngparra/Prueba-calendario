@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Agenda de Aulas y Trabajo de Campo</title>
+<style>
+  :root{
+    --bg:#f5f7fb;
+    --card:#ffffff;
+    --text:#1f2937;
+    --muted:#6b7280;
+    --line:#dfe4ea;
+    --primary:#1f5f4a;
+    --primary-2:#2f7a61;
+    --room:#2f6fed;
+    --field:#d97706;
+    --danger:#b42318;
+    --danger-bg:#fef3f2;
+    --ok:#027a48;
+    --ok-bg:#ecfdf3;
+    --shadow:0 8px 24px rgba(16,24,40,.08);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Inter,Segoe UI,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+  }
+
+  header{
+    background:linear-gradient(135deg,#174d3c,#2f7a61);
+    color:#fff;
+    padding:22px 28px;
+  }
+  header h1{margin:0 0 6px;font-size:1.55rem}
+  header p{margin:0;opacity:.9;font-size:.95rem}
+
+  .app{
+    max-width:1500px;
+    margin:0 auto;
+    padding:24px;
+    display:grid;
+    grid-template-columns:minmax(0,2fr) minmax(320px,1fr);
+    gap:20px;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    box-shadow:var(--shadow);
+  }
+
+  .calendar-card{padding:18px}
+  .form-card{padding:20px;align-self:start;position:sticky;top:18px}
+
+  .calendar-toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:16px;
+  }
+  .calendar-toolbar h2{margin:0;font-size:1.25rem;text-transform:capitalize}
+  .toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+  button{
+    border:0;
+    border-radius:10px;
+    padding:10px 14px;
+    cursor:pointer;
+    font-weight:700;
+  }
+  .btn-primary{background:var(--primary);color:#fff}
+  .btn-primary:hover{background:var(--primary-2)}
+  .btn-secondary{background:#eef2f6;color:#344054}
+  .btn-danger{background:#fee4e2;color:#b42318}
+  .btn-small{padding:6px 9px;font-size:.78rem}
+
+  .weekdays,.calendar{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+  }
+  .weekdays div{
+    padding:10px 6px;
+    text-align:center;
+    font-size:.78rem;
+    color:var(--muted);
+    font-weight:800;
+    border-bottom:1px solid var(--line);
+  }
+  .day{
+    min-height:125px;
+    border-right:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    padding:7px;
+    background:#fff;
+    overflow:hidden;
+  }
+  .day:nth-child(7n){border-right:0}
+  .day.other{background:#fafafa;color:#98a2b3}
+  .day.today{outline:2px solid var(--primary);outline-offset:-2px}
+  .day:hover{background:#fbfcfe}
+  .date-number{
+    font-size:.8rem;
+    font-weight:800;
+    margin-bottom:5px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:26px;height:26px;
+    border-radius:50%;
+  }
+  .today .date-number{background:var(--primary);color:#fff}
+
+  .event{
+    display:block;
+    margin:4px 0;
+    border-radius:7px;
+    padding:5px 6px;
+    color:#fff;
+    font-size:.72rem;
+    line-height:1.2;
+    cursor:pointer;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .event.room{background:var(--room)}
+  .event.field{background:var(--field)}
+
+  .legend{
+    display:flex;
+    gap:18px;
+    align-items:center;
+    margin-top:14px;
+    font-size:.82rem;
+    color:var(--muted);
+    flex-wrap:wrap;
+  }
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}
+  .dot.room{background:var(--room)}
+  .dot.field{background:var(--field)}
+
+  .form-card h2{margin:0 0 14px}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .full{grid-column:1/-1}
+
+  label{display:block;font-size:.78rem;font-weight:800;margin-bottom:5px;color:#344054}
+  input,select,textarea{
+    width:100%;
+    border:1px solid #cfd6df;
+    border-radius:10px;
+    padding:10px 11px;
+    font:inherit;
+    background:#fff;
+  }
+  textarea{resize:vertical;min-height:72px}
+  input:focus,select:focus,textarea:focus{outline:2px solid rgba(31,95,74,.15);border-color:var(--primary)}
+
+  .hidden{display:none!important}
+
+  .alert{
+    border-radius:10px;
+    padding:10px 12px;
+    margin-bottom:12px;
+    font-size:.84rem;
+    font-weight:600;
+  }
+  .alert-danger{background:var(--danger-bg);color:var(--danger);border:1px solid #fecdca}
+  .alert-ok{background:var(--ok-bg);color:var(--ok);border:1px solid #abefc6}
+
+  .rules{
+    margin-top:16px;
+    padding:12px;
+    background:#f8fafc;
+    border-radius:10px;
+    font-size:.8rem;
+    color:#475467;
+  }
+  .rules strong{color:#344054}
+
+  .event-list-card{
+    max-width:1500px;
+    margin:0 auto 24px;
+    padding:0 24px;
+  }
+  .event-list-inner{padding:18px}
+  .event-list-inner h2{margin:0 0 12px}
+  .reservation{
+    display:grid;
+    grid-template-columns:120px 1fr auto;
+    gap:14px;
+    align-items:center;
+    padding:11px 0;
+    border-top:1px solid var(--line);
+  }
+  .reservation:first-of-type{border-top:0}
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:6px 8px;
+    border-radius:999px;
+    color:#fff;
+    font-size:.72rem;
+    font-weight:800;
+  }
+  .badge.room{background:var(--room)}
+  .badge.field{background:var(--field)}
+  .reservation small{color:var(--muted)}
+  .empty{padding:18px 0;color:var(--muted);font-size:.9rem}
+
+  .data-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .footer-note{font-size:.75rem;color:#667085;margin-top:10px}
+
+  @media(max-width:1000px){
+    .app{grid-template-columns:1fr}
+    .form-card{position:static}
+  }
+  @media(max-width:700px){
+    .app{padding:12px}
+    .event-list-card{padding:0 12px}
+    .day{min-height:90px;padding:4px}
+    .event{font-size:.64rem;padding:4px}
+    .form-grid{grid-template-columns:1fr}
+    .full{grid-column:auto}
+    .reservation{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Agenda de aulas y trabajos de campo</h1>
+  <p>Calendario para reservar espacios y coordinar giras evitando conflictos de horario y de nivel.</p>
+</header>
+
+<main class="app">
+  <section class="card calendar-card">
+    <div class="calendar-toolbar">
+      <h2 id="monthTitle"></h2>
+      <div class="toolbar-actions">
+        <button class="btn-secondary" id="prevMonth">←</button>
+        <button class="btn-secondary" id="todayBtn">Hoy</button>
+        <button class="btn-secondary" id="nextMonth">→</button>
+      </div>
+    </div>
+
+    <div class="weekdays">
+      <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
+    </div>
+    <div id="calendar" class="calendar"></div>
+
+    <div class="legend">
+      <span><span class="dot room"></span>Reserva de aula</span>
+      <span><span class="dot field"></span>Gira / trabajo de campo</span>
+    </div>
+  </section>
+
+  <aside class="card form-card">
+    <h2>Nueva reserva</h2>
+    <div id="alertBox"></div>
+
+    <form id="bookingForm">
+      <div class="form-grid">
+        <div class="full">
+          <label for="type">Tipo de actividad</label>
+          <select id="type" required>
+            <option value="room">Reserva de aula</option>
+            <option value="field">Gira / trabajo de campo</option>
+          </select>
+        </div>
+
+        <div class="full">
+          <label for="course">Curso / actividad</label>
+          <input id="course" placeholder="Ej. Cartografía Básica" required />
+        </div>
+
+        <div>
+          <label for="startDate">Fecha inicial</label>
+          <input id="startDate" type="date" required />
+        </div>
+        <div>
+          <label for="endDate">Fecha final</label>
+          <input id="endDate" type="date" required />
+        </div>
+
+        <div>
+          <label for="startTime">Hora inicial</label>
+          <input id="startTime" type="time" required />
+        </div>
+        <div>
+          <label for="endTime">Hora final</label>
+          <input id="endTime" type="time" required />
+        </div>
+
+        <div id="roomField" class="full">
+          <label for="room">Aula</label>
+          <input id="room" placeholder="Ej. Aula 202" />
+        </div>
+
+        <div id="levelField" class="full hidden">
+          <label for="level">Nivel académico</label>
+          <select id="level">
+            <option value="">Seleccione...</option>
+            <option>1.º nivel</option>
+            <option>2.º nivel</option>
+            <option>3.º nivel</option>
+            <option>4.º nivel</option>
+            <option>5.º nivel</option>
+            <option>Posgrado</option>
+          </select>
+        </div>
+
+        <div id="destinationField" class="full hidden">
+          <label for="destination">Destino / lugar de trabajo de campo</label>
+          <input id="destination" placeholder="Ej. Volcán Poás" />
+        </div>
+
+        <div class="full">
+          <label for="responsible">Persona responsable</label>
+          <input id="responsible" placeholder="Nombre de la persona docente o responsable" required />
+        </div>
+
+        <div class="full">
+          <label for="notes">Observaciones</label>
+          <textarea id="notes" placeholder="Información adicional, grupo, transporte, requisitos, etc."></textarea>
+        </div>
+
+        <div class="full">
+          <button class="btn-primary" type="submit" style="width:100%">Guardar reserva</button>
+        </div>
+      </div>
+    </form>
+
+    <div class="rules">
+      <strong>Validaciones automáticas:</strong><br>
+      • Un aula no puede reservarse si ya existe otra reserva de la misma aula en una franja que se superpone.<br>
+      • Una gira no puede registrarse si ya existe otra gira del mismo nivel en una fecha u horario que se superpone.
+    </div>
+
+    <div class="data-actions">
+      <button class="btn-secondary btn-small" id="exportBtn" type="button">Exportar datos</button>
+      <label class="btn-secondary btn-small" style="cursor:pointer">
+        Importar datos
+        <input id="importInput" type="file" accept=".json" style="display:none">
+      </label>
+    </div>
+    <div class="footer-note">Este prototipo guarda la información en este navegador mediante almacenamiento local.</div>
+  </aside>
+</main>
+
+<section class="event-list-card">
+  <div class="card event-list-inner">
+    <h2>Reservas registradas</h2>
+    <div id="reservationList"></div>
+  </div>
+</section>
+
+<script>
+const STORAGE_KEY = "agenda_ucr_reservas_v1";
+let reservations = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+let currentDate = new Date();
+
+const calendar = document.getElementById("calendar");
+const monthTitle = document.getElementById("monthTitle");
+const bookingForm = document.getElementById("bookingForm");
+const type = document.getElementById("type");
+const roomField = document.getElementById("roomField");
+const levelField = document.getElementById("levelField");
+const destinationField = document.getElementById("destinationField");
+const room = document.getElementById("room");
+const level = document.getElementById("level");
+const destination = document.getElementById("destination");
+const alertBox = document.getElementById("alertBox");
+
+function saveReservations(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(reservations));
+}
+
+function pad(n){ return String(n).padStart(2,"0"); }
+function toDateInput(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function parseLocalDate(dateStr,timeStr="00:00"){
+  return new Date(`${dateStr}T${timeStr}:00`);
+}
+function fmtDate(dateStr){
+  const d = parseLocalDate(dateStr);
+  return new Intl.DateTimeFormat("es-CR",{day:"2-digit",month:"short",year:"numeric"}).format(d);
+}
+function fmtTime(t){ return t; }
+
+function showAlert(message, kind="danger"){
+  alertBox.innerHTML = `<div class="alert alert-${kind}">${message}</div>`;
+  alertBox.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function clearAlert(){ alertBox.innerHTML=""; }
+
+function updateTypeFields(){
+  const isRoom = type.value === "room";
+  roomField.classList.toggle("hidden", !isRoom);
+  levelField.classList.toggle("hidden", isRoom);
+  destinationField.classList.toggle("hidden", isRoom);
+  room.required = isRoom;
+  level.required = !isRoom;
+  destination.required = !isRoom;
+  clearAlert();
+}
+type.addEventListener("change", updateTypeFields);
+
+function intervalsOverlap(aStart,aEnd,bStart,bEnd){
+  return aStart < bEnd && bStart < aEnd;
+}
+
+function validateReservation(item){
+  const start = parseLocalDate(item.startDate,item.startTime);
+  const end = parseLocalDate(item.endDate,item.endTime);
+
+  if(end <= start){
+    return "La fecha y hora final deben ser posteriores al inicio.";
+  }
+
+  for(const existing of reservations){
+    const exStart = parseLocalDate(existing.startDate,existing.startTime);
+    const exEnd = parseLocalDate(existing.endDate,existing.endTime);
+    if(!intervalsOverlap(start,end,exStart,exEnd)) continue;
+
+    if(item.type === "room" && existing.type === "room"){
+      if(existing.room.trim().toLowerCase() === item.room.trim().toLowerCase()){
+        return `Choque de horario: <strong>${item.room}</strong> ya está reservada por <strong>${existing.course}</strong> (${fmtDate(existing.startDate)} ${existing.startTime}–${existing.endTime}).`;
+      }
+    }
+
+    if(item.type === "field" && existing.type === "field"){
+      if(existing.level === item.level){
+        return `Alerta de gira: ya existe una gira/trabajo de campo para <strong>${item.level}</strong> en un horario que se superpone: <strong>${existing.course}</strong> – ${existing.destination}.`;
+      }
+    }
+  }
+  return null;
+}
+
+bookingForm.addEventListener("submit", e=>{
+  e.preventDefault();
+  clearAlert();
+
+  const item = {
+    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+    type: type.value,
+    course: document.getElementById("course").value.trim(),
+    startDate: document.getElementById("startDate").value,
+    endDate: document.getElementById("endDate").value,
+    startTime: document.getElementById("startTime").value,
+    endTime: document.getElementById("endTime").value,
+    room: room.value.trim(),
+    level: level.value,
+    destination: destination.value.trim(),
+    responsible: document.getElementById("responsible").value.trim(),
+    notes: document.getElementById("notes").value.trim()
+  };
+
+  const conflict = validateReservation(item);
+  if(conflict){
+    showAlert(conflict,"danger");
+    return;
+  }
+
+  reservations.push(item);
+  reservations.sort((a,b)=>parseLocalDate(a.startDate,a.startTime)-parseLocalDate(b.startDate,b.startTime));
+  saveReservations();
+  renderAll();
+
+  const selectedDate = item.startDate;
+  bookingForm.reset();
+  type.value = "room";
+  updateTypeFields();
+  document.getElementById("startDate").value = selectedDate;
+  document.getElementById("endDate").value = selectedDate;
+  showAlert("Reserva guardada correctamente.","ok");
+});
+
+function renderCalendar(){
+  calendar.innerHTML = "";
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  monthTitle.textContent = new Intl.DateTimeFormat("es-CR",{month:"long",year:"numeric"}).format(currentDate);
+
+  const first = new Date(year,month,1);
+  const startDay = (first.getDay()+6)%7; // lunes=0
+  const gridStart = new Date(year,month,1-startDay);
+
+  for(let i=0;i<42;i++){
+    const d = new Date(gridStart);
+    d.setDate(gridStart.getDate()+i);
+    const dateStr = toDateInput(d);
+
+    const cell = document.createElement("div");
+    cell.className = "day";
+    if(d.getMonth()!==month) cell.classList.add("other");
+
+    const today = new Date();
+    if(toDateInput(d)===toDateInput(today)) cell.classList.add("today");
+
+    const n = document.createElement("div");
+    n.className = "date-number";
+    n.textContent = d.getDate();
+    cell.appendChild(n);
+
+    const dayEvents = reservations.filter(r=>{
+      const start = parseLocalDate(r.startDate,"00:00");
+      const end = parseLocalDate(r.endDate,"23:59");
+      const dayStart = parseLocalDate(dateStr,"00:00");
+      const dayEnd = parseLocalDate(dateStr,"23:59");
+      return intervalsOverlap(start,end,dayStart,dayEnd) || dateStr===r.startDate || dateStr===r.endDate;
+    });
+
+    dayEvents.slice(0,4).forEach(r=>{
+      const el = document.createElement("div");
+      el.className = `event ${r.type}`;
+      el.title = reservationTitle(r);
+      el.textContent = r.type==="room"
+        ? `${r.startTime} ${r.room} · ${r.course}`
+        : `${r.level} · ${r.course}`;
+      el.onclick = ev=>{
+        ev.stopPropagation();
+        alert(reservationTitle(r));
+      };
+      cell.appendChild(el);
+    });
+
+    if(dayEvents.length>4){
+      const more = document.createElement("div");
+      more.style.fontSize=".68rem";
+      more.style.color="#667085";
+      more.textContent = `+${dayEvents.length-4} más`;
+      cell.appendChild(more);
+    }
+
+    cell.onclick = ()=>{
+      document.getElementById("startDate").value = dateStr;
+      document.getElementById("endDate").value = dateStr;
+      document.getElementById("course").focus();
+    };
+
+    calendar.appendChild(cell);
+  }
+}
+
+function reservationTitle(r){
+  const span = r.startDate===r.endDate
+    ? `${fmtDate(r.startDate)} ${r.startTime}–${r.endTime}`
+    : `${fmtDate(r.startDate)} ${r.startTime} a ${fmtDate(r.endDate)} ${r.endTime}`;
+  if(r.type==="room"){
+    return `Aula: ${r.room}\nCurso: ${r.course}\n${span}\nResponsable: ${r.responsible}`;
+  }
+  return `Gira / trabajo de campo\nCurso: ${r.course}\nNivel: ${r.level}\nDestino: ${r.destination}\n${span}\nResponsable: ${r.responsible}`;
+}
+
+function renderList(){
+  const list = document.getElementById("reservationList");
+  list.innerHTML = "";
+  if(!reservations.length){
+    list.innerHTML = `<div class="empty">Todavía no hay reservas registradas.</div>`;
+    return;
+  }
+
+  reservations.forEach(r=>{
+    const row = document.createElement("div");
+    row.className="reservation";
+    const span = r.startDate===r.endDate
+      ? `${fmtDate(r.startDate)} · ${r.startTime}–${r.endTime}`
+      : `${fmtDate(r.startDate)} ${r.startTime} → ${fmtDate(r.endDate)} ${r.endTime}`;
+
+    row.innerHTML = `
+      <div><span class="badge ${r.type}">${r.type==="room"?"AULA":"GIRA"}</span></div>
+      <div>
+        <strong>${escapeHtml(r.course)}</strong><br>
+        <small>${span} · ${r.type==="room" ? escapeHtml(r.room) : escapeHtml(r.level+" · "+r.destination)} · Responsable: ${escapeHtml(r.responsible)}</small>
+      </div>
+      <div><button class="btn-danger btn-small" data-id="${r.id}">Eliminar</button></div>
+    `;
+    list.appendChild(row);
+  });
+
+  list.querySelectorAll("[data-id]").forEach(btn=>{
+    btn.onclick = ()=>{
+      const r = reservations.find(x=>x.id===btn.dataset.id);
+      if(confirm(`¿Eliminar la reserva de "${r.course}"?`)){
+        reservations = reservations.filter(x=>x.id!==btn.dataset.id);
+        saveReservations();
+        renderAll();
+      }
+    };
+  });
+}
+
+function escapeHtml(str=""){
+  return str.replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+}
+
+document.getElementById("prevMonth").onclick=()=>{
+  currentDate = new Date(currentDate.getFullYear(),currentDate.getMonth()-1,1);
+  renderCalendar();
+};
+document.getElementById("nextMonth").onclick=()=>{
+  currentDate = new Date(currentDate.getFullYear(),currentDate.getMonth()+1,1);
+  renderCalendar();
+};
+document.getElementById("todayBtn").onclick=()=>{
+  currentDate = new Date();
+  renderCalendar();
+};
+
+document.getElementById("exportBtn").onclick=()=>{
+  const blob = new Blob([JSON.stringify(reservations,null,2)],{type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href=url;
+  a.download="reservas_agenda.json";
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+document.getElementById("importInput").addEventListener("change", async e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  try{
+    const data = JSON.parse(await file.text());
+    if(!Array.isArray(data)) throw new Error("Formato inválido");
+    reservations = data;
+    saveReservations();
+    renderAll();
+    showAlert("Datos importados correctamente.","ok");
+  }catch(err){
+    showAlert("No se pudo importar el archivo. Verifique que sea un JSON exportado por esta agenda.","danger");
+  }
+  e.target.value="";
+});
+
+function renderAll(){
+  renderCalendar();
+  renderList();
+}
+
+(function init(){
+  const today = new Date();
+  const todayStr = toDateInput(today);
+  document.getElementById("startDate").value=todayStr;
+  document.getElementById("endDate").value=todayStr;
+  document.getElementById("startTime").value="08:00";
+  document.getElementById("endTime").value="10:00";
+  updateTypeFields();
+  renderAll();
+})();
+</script>
+</body>
+</html>
