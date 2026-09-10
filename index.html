@@ -4,135 +4,83 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="robots" content="noindex,nofollow" />
-<title>Agenda de Aulas y Trabajo de Campo</title>
+<title>Agenda de Salas, Giras y Vehículos</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./config.js"></script>
 <style>
 :root{
   --bg:#f5f7fb;--card:#fff;--text:#1f2937;--muted:#667085;--line:#dfe4ea;
-  --primary:#1f5f4a;--primary2:#2f7a61;--room:#2f6fed;--field:#d97706;
+  --primary:#1f5f4a;--primary2:#2f7a61;--room:#2f6fed;--field:#d97706;--vehicle:#7c3aed;
   --danger:#b42318;--dangerbg:#fef3f2;--ok:#027a48;--okbg:#ecfdf3;
   --warn:#b54708;--warnbg:#fffaeb;--shadow:0 8px 24px rgba(16,24,40,.08);
 }
-*{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
-button,input,select,textarea{font:inherit} button{border:0;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:700}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}button{border:0;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:700}
 button:disabled{opacity:.55;cursor:not-allowed}.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary2)}
 .btn-secondary{background:#eef2f6;color:#344054}.btn-danger{background:#fee4e2;color:#b42318}.btn-small{padding:6px 9px;font-size:.78rem}
 .hidden{display:none!important}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
-header{background:linear-gradient(135deg,#174d3c,#2f7a61);color:#fff;padding:18px 28px}
-.header-inner{max-width:1500px;margin:auto;display:flex;justify-content:space-between;gap:16px;align-items:center}
-header h1{margin:0 0 5px;font-size:1.5rem}header p{margin:0;opacity:.9;font-size:.9rem}.account{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
-.account small{opacity:.9}.role{padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.16);font-size:.72rem;font-weight:800}
+header{background:linear-gradient(135deg,#174d3c,#2f7a61);color:#fff;padding:18px 28px}.header-inner{max-width:1500px;margin:auto;display:flex;justify-content:space-between;gap:16px;align-items:center}
+header h1{margin:0 0 5px;font-size:1.5rem}header p{margin:0;opacity:.9;font-size:.9rem}.account{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.account small{opacity:.9}.role{padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.16);font-size:.72rem;font-weight:800}
 .setup,.login-wrap{max-width:620px;margin:56px auto;padding:0 18px}.login-card{padding:24px}.login-card h2{margin-top:0}.login-card p{color:var(--muted);line-height:1.5}
-label{display:block;font-size:.78rem;font-weight:800;margin-bottom:5px;color:#344054}input,select,textarea{width:100%;border:1px solid #cfd6df;border-radius:10px;padding:10px 11px;background:#fff}
-input:focus,select:focus,textarea:focus{outline:2px solid rgba(31,95,74,.14);border-color:var(--primary)}textarea{resize:vertical;min-height:72px}
-.alert{border-radius:10px;padding:10px 12px;margin:10px 0;font-size:.84rem;font-weight:600}.alert-danger{background:var(--dangerbg);color:var(--danger);border:1px solid #fecdca}
-.alert-ok{background:var(--okbg);color:var(--ok);border:1px solid #abefc6}.alert-warn{background:var(--warnbg);color:var(--warn);border:1px solid #fedf89}
+label{display:block;font-size:.78rem;font-weight:800;margin-bottom:5px;color:#344054}input,select,textarea{width:100%;border:1px solid #cfd6df;border-radius:10px;padding:10px 11px;background:#fff}input:focus,select:focus,textarea:focus{outline:2px solid rgba(31,95,74,.14);border-color:var(--primary)}textarea{resize:vertical;min-height:72px}
+.alert{border-radius:10px;padding:10px 12px;margin:10px 0;font-size:.84rem;font-weight:600}.alert-danger{background:var(--dangerbg);color:var(--danger);border:1px solid #fecdca}.alert-ok{background:var(--okbg);color:var(--ok);border:1px solid #abefc6}.alert-warn{background:var(--warnbg);color:var(--warn);border:1px solid #fedf89}
 .app{max-width:1500px;margin:0 auto;padding:24px;display:grid;grid-template-columns:minmax(0,2fr) minmax(330px,1fr);gap:20px}.calendar-card{padding:18px}.form-card{padding:20px;align-self:start;position:sticky;top:16px}
-.calendar-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}.calendar-toolbar h2{margin:0;font-size:1.25rem;text-transform:capitalize}.toolbar-actions,.filters{display:flex;gap:8px;flex-wrap:wrap}.filters select{width:auto;min-width:120px;padding:8px 10px}
-.weekdays,.calendar{display:grid;grid-template-columns:repeat(7,1fr)}.weekdays div{padding:10px 6px;text-align:center;font-size:.78rem;color:var(--muted);font-weight:800;border-bottom:1px solid var(--line)}
-.day{min-height:128px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:7px;background:#fff;overflow:hidden}.day:nth-child(7n){border-right:0}.day.other{background:#fafafa;color:#98a2b3}.day.today{outline:2px solid var(--primary);outline-offset:-2px}.day:hover{background:#fbfcfe}
-.date-number{font-size:.8rem;font-weight:800;margin-bottom:5px;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%}.today .date-number{background:var(--primary);color:#fff}
-.event{display:block;margin:4px 0;border-radius:7px;padding:5px 6px;color:#fff;font-size:.71rem;line-height:1.2;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.event.room{background:var(--room)}.event.field{background:var(--field)}
-.legend{display:flex;gap:18px;align-items:center;margin-top:14px;font-size:.82rem;color:var(--muted);flex-wrap:wrap}.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}.dot.room{background:var(--room)}.dot.field{background:var(--field)}
-.form-card h2{margin:0 0 14px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}.rules{margin-top:16px;padding:12px;background:#f8fafc;border-radius:10px;font-size:.8rem;color:#475467;line-height:1.45}
-.section-wrap{max-width:1500px;margin:0 auto 24px;padding:0 24px}.section-card{padding:18px}.section-card h2{margin:0 0 12px}.reservation{display:grid;grid-template-columns:105px 1fr auto;gap:14px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}.reservation:first-of-type{border-top:0}.reservation.cancelled{opacity:.62}.reservation small{color:var(--muted);line-height:1.45}.badge{display:inline-flex;align-items:center;justify-content:center;padding:6px 8px;border-radius:999px;color:#fff;font-size:.7rem;font-weight:800}.badge.room{background:var(--room)}.badge.field{background:var(--field)}.badge.cancelled{background:#667085}
-.empty{padding:18px 0;color:var(--muted);font-size:.9rem}.admin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.admin-box{border:1px solid var(--line);border-radius:12px;padding:14px}.admin-box h3{margin:0 0 10px}.mini-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-top:1px solid #eef1f4;font-size:.82rem}.mini-row:first-of-type{border-top:0}.inline{display:flex;gap:7px}.inline input,.inline select{min-width:0}.muted{color:var(--muted);font-size:.8rem}.profile-strip{max-width:1500px;margin:18px auto 0;padding:0 24px}.profile-inner{padding:14px 18px;display:flex;align-items:end;gap:12px;flex-wrap:wrap}.profile-inner>div{flex:1;min-width:230px}.profile-inner button{flex:0 0 auto}
+.calendar-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}.calendar-toolbar h2{margin:0;font-size:1.25rem;text-transform:capitalize}.toolbar-actions,.filters{display:flex;gap:8px;flex-wrap:wrap}.filters select{width:auto;min-width:125px;padding:8px 10px}
+.weekdays,.calendar{display:grid;grid-template-columns:repeat(7,1fr)}.weekdays div{padding:10px 6px;text-align:center;font-size:.78rem;color:var(--muted);font-weight:800;border-bottom:1px solid var(--line)}.day{min-height:128px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:7px;background:#fff;overflow:hidden}.day:nth-child(7n){border-right:0}.day.other{background:#fafafa;color:#98a2b3}.day.today{outline:2px solid var(--primary);outline-offset:-2px}.day:hover{background:#fbfcfe}.date-number{font-size:.8rem;font-weight:800;margin-bottom:5px;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%}.today .date-number{background:var(--primary);color:#fff}
+.event{display:block;margin:4px 0;border-radius:7px;padding:5px 6px;color:#fff;font-size:.71rem;line-height:1.2;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.event.room{background:var(--room)}.event.field{background:var(--field)}.event.vehicle{background:var(--vehicle)}
+.legend{display:flex;gap:18px;align-items:center;margin-top:14px;font-size:.82rem;color:var(--muted);flex-wrap:wrap}.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}.dot.room{background:var(--room)}.dot.field{background:var(--field)}.dot.vehicle{background:var(--vehicle)}
+.form-card h2{margin:0 0 8px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}.rules{margin-top:16px;padding:12px;background:#f8fafc;border-radius:10px;font-size:.8rem;color:#475467;line-height:1.45}.role-note{margin:0 0 14px;color:var(--muted);font-size:.8rem;line-height:1.4}
+.section-wrap{max-width:1500px;margin:0 auto 24px;padding:0 24px}.section-card{padding:18px}.section-card h2{margin:0 0 12px}.reservation{display:grid;grid-template-columns:105px 1fr auto;gap:14px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}.reservation:first-of-type{border-top:0}.reservation.cancelled{opacity:.62}.reservation small{color:var(--muted);line-height:1.45}.badge{display:inline-flex;align-items:center;justify-content:center;padding:6px 8px;border-radius:999px;color:#fff;font-size:.7rem;font-weight:800}.badge.room{background:var(--room)}.badge.field{background:var(--field)}.badge.vehicle{background:var(--vehicle)}.badge.cancelled{background:#667085}
+.empty{padding:18px 0;color:var(--muted);font-size:.9rem}.admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px}.admin-box{border:1px solid var(--line);border-radius:12px;padding:14px}.admin-box h3{margin:0 0 10px}.mini-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-top:1px solid #eef1f4;font-size:.82rem}.mini-row:first-of-type{border-top:0}.inline{display:flex;gap:7px}.inline input,.inline select{min-width:0}.muted{color:var(--muted);font-size:.8rem}.profile-strip{max-width:1500px;margin:18px auto 0;padding:0 24px}.profile-inner{padding:14px 18px;display:flex;align-items:end;gap:12px;flex-wrap:wrap}.profile-inner>div{flex:1;min-width:230px}.profile-inner button{flex:0 0 auto}.two-inputs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px}
 .modal-backdrop{position:fixed;inset:0;background:rgba(16,24,40,.56);display:flex;align-items:center;justify-content:center;padding:18px;z-index:1000}.modal{background:#fff;border-radius:16px;max-width:620px;width:100%;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,.25)}.modal h3{margin-top:0}.modal-grid{display:grid;grid-template-columns:150px 1fr;gap:8px 14px;font-size:.88rem}.modal-grid strong{color:#344054}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
-@media(max-width:1050px){.app{grid-template-columns:1fr}.form-card{position:static}.admin-grid{grid-template-columns:1fr}}
-@media(max-width:700px){.app{padding:12px}.section-wrap,.profile-strip{padding:0 12px}.day{min-height:90px;padding:4px}.event{font-size:.63rem;padding:4px}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.reservation{grid-template-columns:1fr}.header-inner{align-items:flex-start;flex-direction:column}.account{justify-content:flex-start}.modal-grid{grid-template-columns:1fr}}
+@media(max-width:1050px){.app{grid-template-columns:1fr}.form-card{position:static}}@media(max-width:700px){.app{padding:12px}.section-wrap,.profile-strip{padding:0 12px}.day{min-height:90px;padding:4px}.event{font-size:.63rem;padding:4px}.form-grid,.two-inputs{grid-template-columns:1fr}.full{grid-column:auto}.reservation{grid-template-columns:1fr}.header-inner{align-items:flex-start;flex-direction:column}.account{justify-content:flex-start}.modal-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<header>
-  <div class="header-inner">
-    <div><h1>Agenda de aulas y trabajos de campo</h1><p>Escuela de Geografía · calendario compartido</p></div>
-    <div id="accountBox" class="account hidden">
-      <div><strong id="accountName"></strong><br><small id="accountEmail"></small></div>
-      <span id="roleBadge" class="role"></span>
-      <button id="signOutBtn" class="btn-secondary btn-small">Cerrar sesión</button>
-    </div>
-  </div>
-</header>
+<header><div class="header-inner"><div><h1>Agenda de salas, giras y vehículos</h1><p>Escuela de Geografía · calendario compartido</p></div><div id="accountBox" class="account hidden"><div><strong id="accountName"></strong><br><small id="accountEmail"></small></div><span id="roleBadge" class="role"></span><button id="signOutBtn" class="btn-secondary btn-small">Cerrar sesión</button></div></div></header>
 
-<section id="configError" class="setup hidden">
-  <div class="card login-card"><h2>Falta conectar Supabase</h2><p>Abra <strong>config.js</strong> y sustituya <code>TU-PROYECTO</code> y <code>TU_PUBLISHABLE_KEY</code> por los datos de su proyecto Supabase.</p></div>
-</section>
+<section id="configError" class="setup hidden"><div class="card login-card"><h2>Falta conectar Supabase</h2><p>Revise que <strong>config.js</strong> contenga la Project URL y la Publishable Key de su proyecto Supabase.</p></div></section>
 
-<section id="loginView" class="login-wrap hidden">
-  <div class="card login-card">
-    <h2>Ingresar al calendario</h2>
-    <p>Use su correo institucional <strong>@ucr.ac.cr</strong>. Recibirá un enlace de acceso por correo; no necesita crear ni recordar una contraseña.</p>
-    <div id="loginAlert"></div>
-    <form id="loginForm">
-      <label for="loginEmail">Correo institucional</label>
-      <input id="loginEmail" type="email" placeholder="nombre.apellido@ucr.ac.cr" autocomplete="email" required>
-      <button class="btn-primary" style="width:100%;margin-top:12px" type="submit">Enviar enlace de acceso</button>
-    </form>
-  </div>
-</section>
+<section id="loginView" class="login-wrap hidden"><div class="card login-card"><h2>Ingresar al calendario</h2><p>Use su correo institucional <strong>@ucr.ac.cr</strong>. Recibirá un enlace de acceso por correo.</p><div id="loginAlert"></div><form id="loginForm"><label for="loginEmail">Correo institucional</label><input id="loginEmail" type="email" placeholder="nombre.apellido@ucr.ac.cr" autocomplete="email" required><button class="btn-primary" style="width:100%;margin-top:12px" type="submit">Enviar enlace de acceso</button></form></div></section>
 
 <section id="mainView" class="hidden">
-  <div id="profileStrip" class="profile-strip hidden">
-    <div class="card profile-inner">
-      <div><label for="profileName">Nombre que aparecerá en las reservas</label><input id="profileName" placeholder="Nombre y apellidos"></div>
-      <button id="saveProfileBtn" class="btn-primary">Guardar nombre</button>
-    </div>
-  </div>
+  <div id="profileStrip" class="profile-strip hidden"><div class="card profile-inner"><div><label for="profileName">Nombre que aparecerá en las reservas</label><input id="profileName" placeholder="Nombre y apellidos"></div><button id="saveProfileBtn" class="btn-primary">Guardar nombre</button></div></div>
 
   <main class="app">
     <section class="card calendar-card">
-      <div class="calendar-toolbar">
-        <h2 id="monthTitle"></h2>
-        <div class="toolbar-actions"><button class="btn-secondary" id="prevMonth">←</button><button class="btn-secondary" id="todayBtn">Hoy</button><button class="btn-secondary" id="nextMonth">→</button></div>
-      </div>
-      <div class="calendar-toolbar">
-        <div class="filters">
-          <select id="filterType"><option value="all">Todo</option><option value="room">Aulas</option><option value="field">Giras</option></select>
-          <select id="filterRoom"><option value="all">Todas las aulas</option></select>
-          <select id="filterLevel"><option value="all">Todos los niveles</option><option>1.º nivel</option><option>2.º nivel</option><option>3.º nivel</option><option>4.º nivel</option><option>5.º nivel</option><option>Posgrado</option></select>
-        </div>
-        <button id="refreshBtn" class="btn-secondary btn-small">Actualizar</button>
-      </div>
-      <div class="weekdays"><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div></div>
-      <div id="calendar" class="calendar"></div>
-      <div class="legend"><span><span class="dot room"></span>Reserva de aula</span><span><span class="dot field"></span>Gira / trabajo de campo</span></div>
+      <div class="calendar-toolbar"><h2 id="monthTitle"></h2><div class="toolbar-actions"><button class="btn-secondary" id="prevMonth">←</button><button class="btn-secondary" id="todayBtn">Hoy</button><button class="btn-secondary" id="nextMonth">→</button></div></div>
+      <div class="calendar-toolbar"><div class="filters"><select id="filterType"><option value="all">Todo</option><option value="room">Salas</option><option value="field">Giras</option><option value="vehicle">Vehículos</option></select><select id="filterRoom"><option value="all">Todas las salas</option></select><select id="filterVehicle"><option value="all">Todos los vehículos</option></select><select id="filterLevel"><option value="all">Todos los niveles</option><option>1.º nivel</option><option>2.º nivel</option><option>3.º nivel</option><option>4.º nivel</option><option>5.º nivel</option><option>Posgrado</option></select></div><button id="refreshBtn" class="btn-secondary btn-small">Actualizar</button></div>
+      <div class="weekdays"><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div></div><div id="calendar" class="calendar"></div>
+      <div class="legend"><span><span class="dot room"></span>Sala</span><span><span class="dot field"></span>Gira / trabajo de campo</span><span><span class="dot vehicle"></span>Vehículo</span></div>
     </section>
 
     <aside class="card form-card">
-      <h2>Nueva reserva</h2><div id="bookingAlert"></div>
-      <form id="bookingForm">
-        <div class="form-grid">
-          <div class="full"><label for="type">Tipo de actividad</label><select id="type" required><option value="room">Reserva de aula</option><option value="field">Gira / trabajo de campo</option></select></div>
-          <div><label for="courseCode">Sigla del curso</label><input id="courseCode" placeholder="Ej. GF-0601"></div>
-          <div><label for="courseName">Curso / actividad</label><input id="courseName" placeholder="Ej. Cartografía" required></div>
-          <div><label for="startDate">Fecha inicial</label><input id="startDate" type="date" required></div>
-          <div><label for="endDate">Fecha final</label><input id="endDate" type="date" required></div>
-          <div><label for="startTime">Hora inicial</label><input id="startTime" type="time" required></div>
-          <div><label for="endTime">Hora final</label><input id="endTime" type="time" required></div>
-          <div id="roomField" class="full"><label for="room">Aula</label><select id="room"></select><div id="noRoomsMsg" class="muted hidden">No hay aulas activas. Un administrador debe agregarlas.</div></div>
-          <div id="levelField" class="full hidden"><label for="level">Nivel académico</label><select id="level"><option value="">Seleccione…</option><option>1.º nivel</option><option>2.º nivel</option><option>3.º nivel</option><option>4.º nivel</option><option>5.º nivel</option><option>Posgrado</option></select></div>
-          <div id="destinationField" class="full hidden"><label for="destination">Destino / lugar</label><input id="destination" placeholder="Ej. Volcán Poás"></div>
-          <div class="full"><label for="responsible">Persona responsable</label><input id="responsible" required></div>
-          <div class="full"><label for="notes">Observaciones</label><textarea id="notes" placeholder="Grupo, transporte, requisitos, etc."></textarea></div>
-          <div class="full"><button id="saveBookingBtn" class="btn-primary" type="submit" style="width:100%">Guardar reserva</button></div>
-        </div>
-      </form>
-      <div class="rules"><strong>Reglas:</strong><br>• Una misma aula no puede tener reservas superpuestas.<br>• Dos giras del mismo nivel no pueden superponerse.<br>• El estudiantado/docentes no pueden borrar reservas. Solo administración puede <strong>cancelarlas</strong>, conservando el historial.</div>
+      <h2>Nueva reserva</h2><p id="bookingRoleNote" class="role-note"></p><div id="bookingAlert"></div>
+      <form id="bookingForm"><div class="form-grid">
+        <div class="full"><label for="type">Tipo de reserva</label><select id="type" required></select></div>
+        <div><label for="courseCode">Sigla del curso</label><input id="courseCode" placeholder="Ej. GF-0601"></div>
+        <div><label for="courseName">Curso / actividad</label><input id="courseName" placeholder="Ej. Cartografía / reunión" required></div>
+        <div><label for="startDate">Fecha inicial</label><input id="startDate" type="date" required></div><div><label for="endDate">Fecha final</label><input id="endDate" type="date" required></div>
+        <div><label for="startTime">Hora inicial</label><input id="startTime" type="time" required></div><div><label for="endTime">Hora final</label><input id="endTime" type="time" required></div>
+        <div id="roomField" class="full hidden"><label for="room">Sala</label><select id="room"></select><div id="noRoomsMsg" class="muted hidden">No hay salas activas. Administración debe agregarlas.</div></div>
+        <div id="vehicleField" class="full hidden"><label for="vehicle">Vehículo</label><select id="vehicle"></select><div id="noVehiclesMsg" class="muted hidden">No hay vehículos activos. Administración debe agregarlos.</div></div>
+        <div id="levelField" class="full hidden"><label for="level">Nivel académico</label><select id="level"><option value="">Seleccione…</option><option>1.º nivel</option><option>2.º nivel</option><option>3.º nivel</option><option>4.º nivel</option><option>5.º nivel</option><option>Posgrado</option></select></div>
+        <div id="destinationField" class="full hidden"><label for="destination">Destino / lugar</label><input id="destination" placeholder="Ej. Volcán Poás"></div>
+        <div class="full"><label for="responsible">Persona responsable</label><input id="responsible" required></div><div class="full"><label for="notes">Observaciones</label><textarea id="notes" placeholder="Grupo, transporte, requisitos, motivo de uso, etc."></textarea></div>
+        <div class="full"><button id="saveBookingBtn" class="btn-primary" type="submit" style="width:100%">Guardar reserva</button></div>
+      </div></form>
+      <div class="rules"><strong>Reglas:</strong><br>• Las <strong>salas solo pueden ser reservadas por Administración</strong>.<br>• Una misma sala no puede tener reservas superpuestas.<br>• Dos giras del mismo nivel no pueden superponerse.<br>• Un mismo vehículo no puede tener reservas superpuestas.<br>• Docentes no pueden cancelar ni borrar reservas. Administración puede cancelarlas conservando el historial.</div>
     </aside>
   </main>
 
   <section class="section-wrap"><div class="card section-card"><div class="calendar-toolbar"><h2>Reservas registradas</h2><select id="listFilter" style="width:auto"><option value="upcoming">Próximas activas</option><option value="mine">Mis reservas</option><option value="all">Historial completo</option></select></div><div id="reservationList"></div></div></section>
 
-  <section id="adminSection" class="section-wrap hidden">
-    <div class="card section-card"><h2>Administración</h2><p class="muted">Estas herramientas solo aparecen a cuentas con rol Administrador.</p>
-      <div class="admin-grid">
-        <div class="admin-box"><h3>Aulas</h3><div class="inline"><input id="newRoomName" placeholder="Ej. Aula 202"><button id="addRoomBtn" class="btn-primary btn-small">Agregar</button></div><div id="roomAdminList"></div></div>
-        <div class="admin-box"><h3>Correos de notificación</h3><div class="inline"><input id="newRecipientEmail" type="email" placeholder="otro@ucr.ac.cr"><button id="addRecipientBtn" class="btn-primary btn-small">Agregar</button></div><div id="recipientAdminList"></div></div>
-        <div class="admin-box"><h3>Usuarios y roles</h3><div id="userAdminList"></div></div>
-      </div>
-    </div>
-  </section>
+  <section id="adminSection" class="section-wrap hidden"><div class="card section-card"><h2>Administración</h2><p class="muted">Estas herramientas solo aparecen a cuentas con rol Administrador.</p><div class="admin-grid">
+    <div class="admin-box"><h3>Salas</h3><div class="inline"><input id="newRoomName" placeholder="Ej. Sala de reuniones"><button id="addRoomBtn" class="btn-primary btn-small">Agregar</button></div><div id="roomAdminList"></div></div>
+    <div class="admin-box"><h3>Vehículos</h3><div class="two-inputs"><input id="newVehicleName" placeholder="Ej. Toyota Hilux 01"><input id="newVehiclePlate" placeholder="Placa (opcional)"></div><button id="addVehicleBtn" class="btn-primary btn-small" style="width:100%">Agregar vehículo</button><div id="vehicleAdminList"></div></div>
+    <div class="admin-box"><h3>Correos de notificación</h3><div class="inline"><input id="newRecipientEmail" type="email" placeholder="otro@ucr.ac.cr"><button id="addRecipientBtn" class="btn-primary btn-small">Agregar</button></div><div id="recipientAdminList"></div></div>
+    <div class="admin-box"><h3>Usuarios y roles</h3><div id="userAdminList"></div></div>
+  </div></div></section>
 </section>
 
 <div id="detailModal" class="modal-backdrop hidden"><div class="modal"><h3>Detalle de la reserva</h3><div id="modalContent" class="modal-grid"></div><div class="modal-actions"><button id="closeModalBtn" class="btn-secondary">Cerrar</button></div></div></div>
@@ -140,222 +88,126 @@ input:focus,select:focus,textarea:focus{outline:2px solid rgba(31,95,74,.14);bor
 <script>
 (() => {
 'use strict';
-const cfg = window.APP_CONFIG || {};
-const configured = cfg.SUPABASE_URL && cfg.SUPABASE_PUBLISHABLE_KEY && !cfg.SUPABASE_URL.includes('TU-PROYECTO') && !cfg.SUPABASE_PUBLISHABLE_KEY.includes('TU_PUBLISHABLE');
-const $ = id => document.getElementById(id);
-const esc = s => String(s ?? '').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-const domain = (cfg.ALLOWED_EMAIL_DOMAIN || 'ucr.ac.cr').toLowerCase();
-let sb, session=null, profile=null, reservations=[], classrooms=[], recipients=[], profiles=[], channel=null;
-let current = new Date();
-let currentYear=current.getFullYear(), currentMonth=current.getMonth();
+const cfg=window.APP_CONFIG||{};
+const configured=cfg.SUPABASE_URL&&cfg.SUPABASE_PUBLISHABLE_KEY&&!cfg.SUPABASE_URL.includes('TU-PROYECTO')&&!cfg.SUPABASE_PUBLISHABLE_KEY.includes('TU_PUBLISHABLE');
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const domain=(cfg.ALLOWED_EMAIL_DOMAIN||'ucr.ac.cr').toLowerCase();
+let sb,session=null,profile=null,reservations=[],classrooms=[],vehicles=[],recipients=[],profiles=[],channel=null;
+let current=new Date(),currentYear=current.getFullYear(),currentMonth=current.getMonth();
 
-function showAlert(target,msg,kind='danger'){ target.innerHTML=`<div class="alert alert-${kind}">${msg}</div>`; }
-function clearAlert(target){ target.innerHTML=''; }
-function crISO(date,time){ return new Date(`${date}T${time}:00-06:00`).toISOString(); }
-function crDateKey(date){ return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Costa_Rica',year:'numeric',month:'2-digit',day:'2-digit'}).format(date); }
-function fmtDateTime(iso){ return new Intl.DateTimeFormat('es-CR',{timeZone:'America/Costa_Rica',dateStyle:'medium',timeStyle:'short'}).format(new Date(iso)); }
-function fmtDateOnly(d){ return new Intl.DateTimeFormat('es-CR',{timeZone:'America/Costa_Rica',dateStyle:'medium'}).format(new Date(d)); }
+function showAlert(target,msg,kind='danger'){target.innerHTML=`<div class="alert alert-${kind}">${msg}</div>`}
+function clearAlert(target){target.innerHTML=''}
+function crISO(date,time){return new Date(`${date}T${time}:00-06:00`).toISOString()}
+function crDateKey(date){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Costa_Rica',year:'numeric',month:'2-digit',day:'2-digit'}).format(date)}
+function fmtDateTime(iso){return new Intl.DateTimeFormat('es-CR',{timeZone:'America/Costa_Rica',dateStyle:'medium',timeStyle:'short'}).format(new Date(iso))}
+function fmtShortTime(iso){return new Intl.DateTimeFormat('es-CR',{timeZone:'America/Costa_Rica',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(iso))}
 function pad(n){return String(n).padStart(2,'0')}
 function localDateString(y,m,d){return `${y}-${pad(m+1)}-${pad(d)}`}
-function roomName(id){ return classrooms.find(r=>r.id===id)?.name || 'Aula'; }
-function isAdmin(){ return profile?.role==='admin'; }
-function courseLabel(r){ return [r.course_code,r.course_name].filter(Boolean).join(' – '); }
+function roomName(id){return classrooms.find(r=>r.id===id)?.name||'Sala'}
+function vehicleName(id){const v=vehicles.find(x=>x.id===id);return v?(v.plate?`${v.name} (${v.plate})`:v.name):'Vehículo'}
+function isAdmin(){return profile?.role==='admin'}
+function courseLabel(r){return [r.course_code,r.course_name].filter(Boolean).join(' – ')}
 function activeReservations(){return reservations.filter(r=>r.status==='active')}
+function typeLabel(type){return type==='room'?'Sala':type==='field'?'Gira / trabajo de campo':'Vehículo'}
+function badgeLabel(type){return type==='room'?'SALA':type==='field'?'GIRA':'VEHÍCULO'}
 
-if(!configured){ $('configError').classList.remove('hidden'); return; }
-sb = window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_PUBLISHABLE_KEY);
+if(!configured){$('configError').classList.remove('hidden');return}
+sb=window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_PUBLISHABLE_KEY);
 
-async function init(){
-  const {data:{session:s}}=await sb.auth.getSession();
-  session=s;
-  if(session) await enterApp(); else showLogin();
-  sb.auth.onAuthStateChange((_event,sess)=>{ session=sess; setTimeout(()=>{ if(sess) enterApp(); else showLogin(); },0); });
-}
+async function init(){const {data:{session:s}}=await sb.auth.getSession();session=s;if(session)await enterApp();else showLogin();sb.auth.onAuthStateChange((_event,sess)=>{session=sess;setTimeout(()=>{if(sess)enterApp();else showLogin()},0)})}
+function showLogin(){$('mainView').classList.add('hidden');$('accountBox').classList.add('hidden');$('loginView').classList.remove('hidden');if(channel){sb.removeChannel(channel);channel=null}}
+async function enterApp(){$('loginView').classList.add('hidden');$('mainView').classList.remove('hidden');$('accountBox').classList.remove('hidden');await loadProfile();await loadData();setupRealtime();renderAll()}
 
-function showLogin(){
-  $('mainView').classList.add('hidden'); $('accountBox').classList.add('hidden'); $('loginView').classList.remove('hidden');
-  if(channel){sb.removeChannel(channel);channel=null}
-}
-
-async function enterApp(){
-  $('loginView').classList.add('hidden'); $('mainView').classList.remove('hidden'); $('accountBox').classList.remove('hidden');
-  await loadProfile(); await loadData(); setupRealtime(); renderAll();
-}
-
-async function loadProfile(){
-  const uid=session.user.id;
-  let {data,error}=await sb.from('profiles').select('*').eq('id',uid).single();
-  if(error){ console.error(error); return; }
-  profile=data;
-  $('accountEmail').textContent=profile.email;
-  $('accountName').textContent=profile.full_name || 'Cuenta UCR';
-  $('roleBadge').textContent=isAdmin()?'Administrador':'Docente';
-  $('profileStrip').classList.toggle('hidden',!!profile.full_name);
-  $('profileName').value=profile.full_name||'';
-  $('responsible').value=profile.full_name||'';
-  $('adminSection').classList.toggle('hidden',!isAdmin());
-}
+async function loadProfile(){const uid=session.user.id;const {data,error}=await sb.from('profiles').select('*').eq('id',uid).single();if(error){console.error(error);return}profile=data;$('accountEmail').textContent=profile.email;$('accountName').textContent=profile.full_name||'Cuenta UCR';$('roleBadge').textContent=isAdmin()?'Administrador':'Docente';$('profileStrip').classList.toggle('hidden',!!profile.full_name);$('profileName').value=profile.full_name||'';$('responsible').value=profile.full_name||'';$('adminSection').classList.toggle('hidden',!isAdmin())}
 
 async function loadData(){
-  const [rRes,cRes]=await Promise.all([
+  const [rRes,cRes,vRes]=await Promise.all([
     sb.from('reservations').select('*').order('start_at',{ascending:true}),
-    sb.from('classrooms').select('*').order('name',{ascending:true})
+    sb.from('classrooms').select('*').order('name',{ascending:true}),
+    sb.from('vehicles').select('*').order('name',{ascending:true})
   ]);
-  if(rRes.error) console.error(rRes.error); else reservations=rRes.data||[];
-  if(cRes.error) console.error(cRes.error); else classrooms=cRes.data||[];
+  if(rRes.error)console.error(rRes.error);else reservations=rRes.data||[];
+  if(cRes.error)console.error(cRes.error);else classrooms=cRes.data||[];
+  if(vRes.error)console.error(vRes.error);else vehicles=vRes.data||[];
   if(isAdmin()){
-    const [nRes,pRes]=await Promise.all([
-      sb.from('notification_recipients').select('*').order('email'),
-      sb.from('profiles').select('*').order('email')
-    ]);
-    recipients=nRes.data||[]; profiles=pRes.data||[];
+    const [nRes,pRes]=await Promise.all([sb.from('notification_recipients').select('*').order('email'),sb.from('profiles').select('*').order('email')]);
+    recipients=nRes.data||[];profiles=pRes.data||[];
   }
   renderAll();
 }
 
-function setupRealtime(){
-  if(channel) sb.removeChannel(channel);
-  channel=sb.channel('agenda-shared')
-    .on('postgres_changes',{event:'*',schema:'public',table:'reservations'},()=>loadData())
-    .on('postgres_changes',{event:'*',schema:'public',table:'classrooms'},()=>loadData())
-    .subscribe();
+function setupRealtime(){if(channel)sb.removeChannel(channel);channel=sb.channel('agenda-shared').on('postgres_changes',{event:'*',schema:'public',table:'reservations'},()=>loadData()).on('postgres_changes',{event:'*',schema:'public',table:'classrooms'},()=>loadData()).on('postgres_changes',{event:'*',schema:'public',table:'vehicles'},()=>loadData()).subscribe()}
+
+$('loginForm').addEventListener('submit',async e=>{e.preventDefault();clearAlert($('loginAlert'));const email=$('loginEmail').value.trim().toLowerCase();if(!email.endsWith('@'+domain)){showAlert($('loginAlert'),`Solo se permiten correos @${esc(domain)}.`);return}const btn=e.submitter;btn.disabled=true;btn.textContent='Enviando…';const redirectTo=window.location.origin+window.location.pathname;const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:redirectTo,shouldCreateUser:true}});btn.disabled=false;btn.textContent='Enviar enlace de acceso';if(error)showAlert($('loginAlert'),esc(error.message));else showAlert($('loginAlert'),'Revise su correo institucional. Le enviamos un enlace para ingresar.','ok')});
+$('signOutBtn').onclick=()=>sb.auth.signOut();
+$('saveProfileBtn').onclick=async()=>{const name=$('profileName').value.trim();if(!name)return alert('Escriba su nombre.');const {error}=await sb.rpc('update_my_profile',{p_full_name:name});if(error)return alert(error.message);await loadProfile();renderAll()};
+
+function renderTypeOptions(){
+  const currentValue=$('type').value;
+  const options=isAdmin()?[['room','Sala'],['field','Gira / trabajo de campo'],['vehicle','Vehículo']]:[['field','Gira / trabajo de campo'],['vehicle','Vehículo']];
+  $('type').innerHTML=options.map(([v,l])=>`<option value="${v}">${l}${v==='room'?' (Administración)':''}</option>`).join('');
+  if(options.some(([v])=>v===currentValue))$('type').value=currentValue;else $('type').value='field';
+  $('bookingRoleNote').textContent=isAdmin()?'Como Administrador puede registrar salas, giras y vehículos.':'Como Docente puede registrar giras y vehículos. Las reservas de salas las gestiona Administración.';
 }
 
-$('loginForm').addEventListener('submit',async e=>{
-  e.preventDefault(); clearAlert($('loginAlert'));
-  const email=$('loginEmail').value.trim().toLowerCase();
-  if(!email.endsWith('@'+domain)){showAlert($('loginAlert'),`Solo se permiten correos @${esc(domain)}.`);return}
-  const btn=e.submitter; btn.disabled=true; btn.textContent='Enviando…';
-  const redirectTo=window.location.origin+window.location.pathname;
-  const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:redirectTo,shouldCreateUser:true}});
-  btn.disabled=false;btn.textContent='Enviar enlace de acceso';
-  if(error) showAlert($('loginAlert'),esc(error.message));
-  else showAlert($('loginAlert'),'Revise su correo institucional. Le enviamos un enlace para ingresar.','ok');
-});
-
-$('signOutBtn').onclick=()=>sb.auth.signOut();
-$('saveProfileBtn').onclick=async()=>{
-  const name=$('profileName').value.trim(); if(!name){return alert('Escriba su nombre.')}
-  const {error}=await sb.rpc('update_my_profile',{p_full_name:name});
-  if(error) return alert(error.message);
-  await loadProfile(); renderAll();
-};
-
 function updateTypeFields(){
-  const isRoom=$('type').value==='room';
-  $('roomField').classList.toggle('hidden',!isRoom); $('levelField').classList.toggle('hidden',isRoom); $('destinationField').classList.toggle('hidden',isRoom);
-  $('room').required=isRoom; $('level').required=!isRoom; $('destination').required=!isRoom;
+  const t=$('type').value,isRoom=t==='room',isField=t==='field',isVehicle=t==='vehicle';
+  $('roomField').classList.toggle('hidden',!isRoom);$('vehicleField').classList.toggle('hidden',!isVehicle);$('levelField').classList.toggle('hidden',!isField);$('destinationField').classList.toggle('hidden',!(isField||isVehicle));
+  $('room').required=isRoom;$('vehicle').required=isVehicle;$('level').required=isField;$('destination').required=isField||isVehicle;
 }
 $('type').onchange=updateTypeFields;
 
-function renderRoomOptions(){
-  const active=classrooms.filter(r=>r.active);
-  $('room').innerHTML=active.length?active.map(r=>`<option value="${r.id}">${esc(r.name)}</option>`).join(''):'<option value="">Sin aulas disponibles</option>';
-  $('noRoomsMsg').classList.toggle('hidden',active.length>0);
-  $('filterRoom').innerHTML='<option value="all">Todas las aulas</option>'+classrooms.map(r=>`<option value="${r.id}">${esc(r.name)}</option>`).join('');
+function renderResourceOptions(){
+  const activeRooms=classrooms.filter(r=>r.active),activeVehicles=vehicles.filter(v=>v.active);
+  $('room').innerHTML=activeRooms.length?activeRooms.map(r=>`<option value="${r.id}">${esc(r.name)}</option>`).join(''):'<option value="">Sin salas disponibles</option>';
+  $('vehicle').innerHTML=activeVehicles.length?activeVehicles.map(v=>`<option value="${v.id}">${esc(vehicleName(v.id))}</option>`).join(''):'<option value="">Sin vehículos disponibles</option>';
+  $('noRoomsMsg').classList.toggle('hidden',activeRooms.length>0);$('noVehiclesMsg').classList.toggle('hidden',activeVehicles.length>0);
+  $('filterRoom').innerHTML='<option value="all">Todas las salas</option>'+classrooms.map(r=>`<option value="${r.id}">${esc(r.name)}</option>`).join('');
+  $('filterVehicle').innerHTML='<option value="all">Todos los vehículos</option>'+vehicles.map(v=>`<option value="${v.id}">${esc(vehicleName(v.id))}</option>`).join('');
 }
 
-function filteredCalendarReservations(){
-  let data=activeReservations(); const t=$('filterType').value, room=$('filterRoom').value, level=$('filterLevel').value;
-  if(t!=='all') data=data.filter(r=>r.type===t);
-  if(room!=='all') data=data.filter(r=>r.classroom_id===room);
-  if(level!=='all') data=data.filter(r=>r.level===level);
-  return data;
-}
+function filteredCalendarReservations(){let data=activeReservations();const t=$('filterType').value,room=$('filterRoom').value,vehicle=$('filterVehicle').value,level=$('filterLevel').value;if(t!=='all')data=data.filter(r=>r.type===t);if(room!=='all')data=data.filter(r=>r.classroom_id===room);if(vehicle!=='all')data=data.filter(r=>r.vehicle_id===vehicle);if(level!=='all')data=data.filter(r=>r.level===level);return data}
 
-function renderCalendar(){
-  const cal=$('calendar');cal.innerHTML='';
-  const monthDate=new Date(currentYear,currentMonth,1);
-  $('monthTitle').textContent=new Intl.DateTimeFormat('es-CR',{month:'long',year:'numeric'}).format(monthDate);
-  const first=new Date(currentYear,currentMonth,1); const startDay=(first.getDay()+6)%7;
-  const gridStart=new Date(currentYear,currentMonth,1-startDay); const data=filteredCalendarReservations(); const todayKey=crDateKey(new Date());
-  for(let i=0;i<42;i++){
-    const d=new Date(gridStart);d.setDate(gridStart.getDate()+i); const dateStr=localDateString(d.getFullYear(),d.getMonth(),d.getDate());
-    const cell=document.createElement('div');cell.className='day';if(d.getMonth()!==currentMonth)cell.classList.add('other');if(dateStr===todayKey)cell.classList.add('today');
-    const n=document.createElement('div');n.className='date-number';n.textContent=d.getDate();cell.appendChild(n);
-    const dayStart=new Date(`${dateStr}T00:00:00-06:00`);const next=new Date(dayStart);next.setDate(next.getDate()+1);
-    const dayEvents=data.filter(r=>new Date(r.start_at)<next && new Date(r.end_at)>dayStart);
-    dayEvents.slice(0,4).forEach(r=>{const el=document.createElement('div');el.className=`event ${r.type}`;el.textContent=r.type==='room'?`${fmtShortTime(r.start_at)} ${roomName(r.classroom_id)} · ${courseLabel(r)}`:`${r.level} · ${courseLabel(r)}`;el.onclick=ev=>{ev.stopPropagation();openDetails(r.id)};cell.appendChild(el)});
-    if(dayEvents.length>4){const more=document.createElement('div');more.className='muted';more.textContent=`+${dayEvents.length-4} más`;cell.appendChild(more)}
-    cell.onclick=()=>{$('startDate').value=dateStr;$('endDate').value=dateStr;$('courseCode').focus()}; cal.appendChild(cell);
-  }
-}
-function fmtShortTime(iso){return new Intl.DateTimeFormat('es-CR',{timeZone:'America/Costa_Rica',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(iso))}
+function eventText(r){if(r.type==='room')return `${fmtShortTime(r.start_at)} ${roomName(r.classroom_id)} · ${courseLabel(r)}`;if(r.type==='field')return `${r.level} · ${courseLabel(r)}`;return `${fmtShortTime(r.start_at)} ${vehicleName(r.vehicle_id)} · ${courseLabel(r)}`}
 
-function localConflict(item){
-  const s=new Date(item.start_at),e=new Date(item.end_at);
-  for(const x of activeReservations()){
-    if(!(s<new Date(x.end_at)&&new Date(x.start_at)<e))continue;
-    if(item.type==='room'&&x.type==='room'&&item.classroom_id===x.classroom_id)return `El aula <strong>${esc(roomName(x.classroom_id))}</strong> ya está reservada por <strong>${esc(courseLabel(x))}</strong> (${esc(fmtDateTime(x.start_at))}–${esc(fmtDateTime(x.end_at))}).`;
-    if(item.type==='field'&&x.type==='field'&&item.level===x.level)return `Ya existe una gira de <strong>${esc(x.level)}</strong> en un horario que se superpone: <strong>${esc(courseLabel(x))}</strong>, ${esc(x.destination)}.`;
-  }
-  return null;
-}
+function renderCalendar(){const cal=$('calendar');cal.innerHTML='';const monthDate=new Date(currentYear,currentMonth,1);$('monthTitle').textContent=new Intl.DateTimeFormat('es-CR',{month:'long',year:'numeric'}).format(monthDate);const first=new Date(currentYear,currentMonth,1),startDay=(first.getDay()+6)%7,gridStart=new Date(currentYear,currentMonth,1-startDay),data=filteredCalendarReservations(),todayKey=crDateKey(new Date());for(let i=0;i<42;i++){const d=new Date(gridStart);d.setDate(gridStart.getDate()+i);const dateStr=localDateString(d.getFullYear(),d.getMonth(),d.getDate());const cell=document.createElement('div');cell.className='day';if(d.getMonth()!==currentMonth)cell.classList.add('other');if(dateStr===todayKey)cell.classList.add('today');const n=document.createElement('div');n.className='date-number';n.textContent=d.getDate();cell.appendChild(n);const dayStart=new Date(`${dateStr}T00:00:00-06:00`),next=new Date(dayStart);next.setDate(next.getDate()+1);const dayEvents=data.filter(r=>new Date(r.start_at)<next&&new Date(r.end_at)>dayStart);dayEvents.slice(0,4).forEach(r=>{const el=document.createElement('div');el.className=`event ${r.type}`;el.textContent=eventText(r);el.onclick=ev=>{ev.stopPropagation();openDetails(r.id)};cell.appendChild(el)});if(dayEvents.length>4){const more=document.createElement('div');more.className='muted';more.textContent=`+${dayEvents.length-4} más`;cell.appendChild(more)}cell.onclick=()=>{$('startDate').value=dateStr;$('endDate').value=dateStr;$('courseCode').focus()};cal.appendChild(cell)}}
+
+function localConflict(item){const s=new Date(item.start_at),e=new Date(item.end_at);for(const x of activeReservations()){if(!(s<new Date(x.end_at)&&new Date(x.start_at)<e))continue;if(item.type==='room'&&x.type==='room'&&item.classroom_id===x.classroom_id)return `La sala <strong>${esc(roomName(x.classroom_id))}</strong> ya está reservada por <strong>${esc(courseLabel(x))}</strong> (${esc(fmtDateTime(x.start_at))}–${esc(fmtDateTime(x.end_at))}).`;if(item.type==='field'&&x.type==='field'&&item.level===x.level)return `Ya existe una gira de <strong>${esc(x.level)}</strong> en un horario que se superpone: <strong>${esc(courseLabel(x))}</strong>, ${esc(x.destination)}.`;if(item.type==='vehicle'&&x.type==='vehicle'&&item.vehicle_id===x.vehicle_id)return `El vehículo <strong>${esc(vehicleName(x.vehicle_id))}</strong> ya está reservado por <strong>${esc(courseLabel(x))}</strong> (${esc(fmtDateTime(x.start_at))}–${esc(fmtDateTime(x.end_at))}).`}return null}
 
 $('bookingForm').addEventListener('submit',async e=>{
   e.preventDefault();clearAlert($('bookingAlert'));
   if(!profile?.full_name){showAlert($('bookingAlert'),'Primero guarde su nombre en la franja superior.','warn');return}
-  const isRoom=$('type').value==='room';
-  if(isRoom&&!$('room').value){showAlert($('bookingAlert'),'No hay un aula seleccionada.');return}
-  const item={
-    type:$('type').value, course_code:$('courseCode').value.trim()||null, course_name:$('courseName').value.trim(),
-    start_at:crISO($('startDate').value,$('startTime').value),end_at:crISO($('endDate').value,$('endTime').value),
-    classroom_id:isRoom?$('room').value:null, level:isRoom?null:$('level').value,destination:isRoom?null:$('destination').value.trim(),
-    responsible_name:$('responsible').value.trim(), notes:$('notes').value.trim()||null, created_by:session.user.id
-  };
+  const t=$('type').value,isRoom=t==='room',isField=t==='field',isVehicle=t==='vehicle';
+  if(isRoom&&!isAdmin()){showAlert($('bookingAlert'),'Solo una cuenta Administrador puede reservar salas.');return}
+  if(isRoom&&!$('room').value){showAlert($('bookingAlert'),'No hay una sala seleccionada.');return}
+  if(isVehicle&&!$('vehicle').value){showAlert($('bookingAlert'),'No hay un vehículo seleccionado.');return}
+  const item={type:t,course_code:$('courseCode').value.trim()||null,course_name:$('courseName').value.trim(),start_at:crISO($('startDate').value,$('startTime').value),end_at:crISO($('endDate').value,$('endTime').value),classroom_id:isRoom?$('room').value:null,vehicle_id:isVehicle?$('vehicle').value:null,level:isField?$('level').value:null,destination:(isField||isVehicle)?$('destination').value.trim():null,responsible_name:$('responsible').value.trim(),notes:$('notes').value.trim()||null,created_by:session.user.id};
   if(new Date(item.end_at)<=new Date(item.start_at)){showAlert($('bookingAlert'),'La fecha/hora final debe ser posterior al inicio.');return}
   const conflict=localConflict(item);if(conflict){showAlert($('bookingAlert'),`<strong>Choque detectado:</strong> ${conflict}`);return}
   const btn=$('saveBookingBtn');btn.disabled=true;btn.textContent='Guardando…';
   const {data,error}=await sb.from('reservations').insert(item).select().single();
-  if(error){
-    btn.disabled=false;btn.textContent='Guardar reserva';
-    const m=error.message||'';
-    if(error.code==='23P01'&&m.includes('reservations_no_room_overlap'))showAlert($('bookingAlert'),'Otra persona acaba de reservar esa aula en un horario que se superpone. La reserva no se guardó.');
-    else if(error.code==='23P01'&&m.includes('reservations_no_field_level_overlap'))showAlert($('bookingAlert'),'Otra gira del mismo nivel coincide con ese horario. La reserva no se guardó.');
-    else showAlert($('bookingAlert'),esc(m)); return;
-  }
-  let mailOk=true; const notify=await sb.functions.invoke('send-reservation-notification',{body:{reservation_id:data.id,event:'created'}}); if(notify.error)mailOk=false;
-  btn.disabled=false;btn.textContent='Guardar reserva'; await loadData(); resetBookingForm();
-  showAlert($('bookingAlert'),mailOk?'Reserva guardada y notificación enviada.':'Reserva guardada. No se pudo confirmar el envío del correo; administración puede revisar los registros.',mailOk?'ok':'warn');
+  if(error){btn.disabled=false;btn.textContent='Guardar reserva';const m=error.message||'';if(error.code==='23P01'&&m.includes('reservations_no_room_overlap'))showAlert($('bookingAlert'),'Otra persona acaba de reservar esa sala en un horario que se superpone. La reserva no se guardó.');else if(error.code==='23P01'&&m.includes('reservations_no_field_level_overlap'))showAlert($('bookingAlert'),'Otra gira del mismo nivel coincide con ese horario. La reserva no se guardó.');else if(error.code==='23P01'&&m.includes('reservations_no_vehicle_overlap'))showAlert($('bookingAlert'),'Ese vehículo acaba de ser reservado en un horario que se superpone. La reserva no se guardó.');else if(m.toLowerCase().includes('row-level security'))showAlert($('bookingAlert'),'No tiene permiso para realizar este tipo de reserva.');else showAlert($('bookingAlert'),esc(m));return}
+  let mailOk=true;const notify=await sb.functions.invoke('send-reservation-notification',{body:{reservation_id:data.id,event:'created'}});if(notify.error)mailOk=false;
+  btn.disabled=false;btn.textContent='Guardar reserva';await loadData();resetBookingForm();showAlert($('bookingAlert'),mailOk?'Reserva guardada y notificación enviada.':'Reserva guardada. La configuración de correo todavía no confirmó el envío.',mailOk?'ok':'warn');
 });
 
-function resetBookingForm(){
-  const date=$('startDate').value;$('bookingForm').reset();$('type').value='room';updateTypeFields();$('startDate').value=date;$('endDate').value=date;$('startTime').value='08:00';$('endTime').value='10:00';$('responsible').value=profile?.full_name||'';renderRoomOptions();
-}
+function resetBookingForm(){const date=$('startDate').value;$('bookingForm').reset();renderTypeOptions();updateTypeFields();$('startDate').value=date;$('endDate').value=date;$('startTime').value='08:00';$('endTime').value='10:00';$('responsible').value=profile?.full_name||'';renderResourceOptions()}
 
-function renderList(){
-  const box=$('reservationList'); let data=[...reservations];const f=$('listFilter').value;const now=new Date();
-  if(f==='upcoming')data=data.filter(r=>r.status==='active'&&new Date(r.end_at)>=now);
-  if(f==='mine')data=data.filter(r=>r.created_by===session.user.id);
-  data.sort((a,b)=>new Date(a.start_at)-new Date(b.start_at));
-  if(!data.length){box.innerHTML='<div class="empty">No hay reservas para mostrar.</div>';return}
-  box.innerHTML=data.map(r=>`<div class="reservation ${r.status==='cancelled'?'cancelled':''}">
-    <div><span class="badge ${r.status==='cancelled'?'cancelled':r.type}">${r.status==='cancelled'?'CANCELADA':r.type==='room'?'AULA':'GIRA'}</span></div>
-    <div><strong>${esc(courseLabel(r))}</strong><br><small>${esc(fmtDateTime(r.start_at))} → ${esc(fmtDateTime(r.end_at))} · ${r.type==='room'?esc(roomName(r.classroom_id)):esc(`${r.level} · ${r.destination}`)} · Responsable: ${esc(r.responsible_name)}${r.cancellation_reason?`<br>Motivo: ${esc(r.cancellation_reason)}`:''}</small></div>
-    <div><button class="btn-secondary btn-small detailBtn" data-id="${r.id}">Ver</button>${isAdmin()&&r.status==='active'?` <button class="btn-danger btn-small cancelBtn" data-id="${r.id}">Cancelar</button>`:''}</div>
-  </div>`).join('');
-  box.querySelectorAll('.detailBtn').forEach(b=>b.onclick=()=>openDetails(b.dataset.id));
-  box.querySelectorAll('.cancelBtn').forEach(b=>b.onclick=()=>cancelReservation(b.dataset.id));
-}
+function summaryText(r){if(r.type==='room')return roomName(r.classroom_id);if(r.type==='field')return `${r.level} · ${r.destination}`;return `${vehicleName(r.vehicle_id)} · ${r.destination}`}
 
-function openDetails(id){
-  const r=reservations.find(x=>x.id===id);if(!r)return;
-  const items=[['Estado',r.status==='active'?'Activa':'Cancelada'],['Tipo',r.type==='room'?'Reserva de aula':'Gira / trabajo de campo'],['Curso',courseLabel(r)],['Inicio',fmtDateTime(r.start_at)],['Final',fmtDateTime(r.end_at)],[r.type==='room'?'Aula':'Nivel',r.type==='room'?roomName(r.classroom_id):r.level],...(r.type==='field'?[['Destino',r.destination]]:[]),['Responsable',r.responsible_name],...(r.notes?[['Observaciones',r.notes]]:[]),...(r.cancellation_reason?[['Motivo de cancelación',r.cancellation_reason]]:[])];
-  $('modalContent').innerHTML=items.map(([k,v])=>`<strong>${esc(k)}</strong><div>${esc(v)}</div>`).join('');$('detailModal').classList.remove('hidden');
-}
+function renderList(){const box=$('reservationList');let data=[...reservations];const f=$('listFilter').value,now=new Date();if(f==='upcoming')data=data.filter(r=>r.status==='active'&&new Date(r.end_at)>=now);if(f==='mine')data=data.filter(r=>r.created_by===session.user.id);data.sort((a,b)=>new Date(a.start_at)-new Date(b.start_at));if(!data.length){box.innerHTML='<div class="empty">No hay reservas para mostrar.</div>';return}box.innerHTML=data.map(r=>`<div class="reservation ${r.status==='cancelled'?'cancelled':''}"><div><span class="badge ${r.status==='cancelled'?'cancelled':r.type}">${r.status==='cancelled'?'CANCELADA':badgeLabel(r.type)}</span></div><div><strong>${esc(courseLabel(r))}</strong><br><small>${esc(fmtDateTime(r.start_at))} → ${esc(fmtDateTime(r.end_at))} · ${esc(summaryText(r))} · Responsable: ${esc(r.responsible_name)}${r.cancellation_reason?`<br>Motivo: ${esc(r.cancellation_reason)}`:''}</small></div><div><button class="btn-secondary btn-small detailBtn" data-id="${r.id}">Ver</button>${isAdmin()&&r.status==='active'?` <button class="btn-danger btn-small cancelBtn" data-id="${r.id}">Cancelar</button>`:''}</div></div>`).join('');box.querySelectorAll('.detailBtn').forEach(b=>b.onclick=()=>openDetails(b.dataset.id));box.querySelectorAll('.cancelBtn').forEach(b=>b.onclick=()=>cancelReservation(b.dataset.id))}
+
+function openDetails(id){const r=reservations.find(x=>x.id===id);if(!r)return;const items=[['Estado',r.status==='active'?'Activa':'Cancelada'],['Tipo',typeLabel(r.type)],['Curso / actividad',courseLabel(r)],['Inicio',fmtDateTime(r.start_at)],['Final',fmtDateTime(r.end_at)],...(r.type==='room'?[['Sala',roomName(r.classroom_id)]]:[]),...(r.type==='field'?[['Nivel',r.level],['Destino',r.destination]]:[]),...(r.type==='vehicle'?[['Vehículo',vehicleName(r.vehicle_id)],['Destino',r.destination]]:[]),['Responsable',r.responsible_name],...(r.notes?[['Observaciones',r.notes]]:[]),...(r.cancellation_reason?[['Motivo de cancelación',r.cancellation_reason]]:[])];$('modalContent').innerHTML=items.map(([k,v])=>`<strong>${esc(k)}</strong><div>${esc(v)}</div>`).join('');$('detailModal').classList.remove('hidden')}
 $('closeModalBtn').onclick=()=>$('detailModal').classList.add('hidden');$('detailModal').onclick=e=>{if(e.target===$('detailModal'))$('detailModal').classList.add('hidden')};
 
-async function cancelReservation(id){
-  const r=reservations.find(x=>x.id===id);if(!r)return;const reason=prompt(`Motivo de cancelación de “${courseLabel(r)}” (opcional):`);if(reason===null)return;
-  const {error}=await sb.rpc('admin_cancel_reservation',{p_reservation_id:id,p_reason:reason||null});if(error)return alert(error.message);
-  const notify=await sb.functions.invoke('send-reservation-notification',{body:{reservation_id:id,event:'cancelled'}});await loadData();
-  alert(notify.error?'Reserva cancelada. No se pudo confirmar el envío del correo.':'Reserva cancelada y notificación enviada.');
-}
+async function cancelReservation(id){const r=reservations.find(x=>x.id===id);if(!r)return;const reason=prompt(`Motivo de cancelación de “${courseLabel(r)}” (opcional):`);if(reason===null)return;const {error}=await sb.rpc('admin_cancel_reservation',{p_reservation_id:id,p_reason:reason||null});if(error)return alert(error.message);const notify=await sb.functions.invoke('send-reservation-notification',{body:{reservation_id:id,event:'cancelled'}});await loadData();alert(notify.error?'Reserva cancelada. No se pudo confirmar el envío del correo.':'Reserva cancelada y notificación enviada.')}
 
-function renderAdmin(){
-  if(!isAdmin())return;
-  $('roomAdminList').innerHTML=classrooms.length?classrooms.map(r=>`<div class="mini-row"><span>${esc(r.name)} ${r.active?'':'(inactiva)'}</span><button class="btn-secondary btn-small roomToggle" data-id="${r.id}" data-active="${r.active}">${r.active?'Desactivar':'Activar'}</button></div>`).join(''):'<div class="empty">Sin aulas.</div>';
+function renderAdmin(){if(!isAdmin())return;
+  $('roomAdminList').innerHTML=classrooms.length?classrooms.map(r=>`<div class="mini-row"><span>${esc(r.name)} ${r.active?'':'(inactiva)'}</span><button class="btn-secondary btn-small roomToggle" data-id="${r.id}" data-active="${r.active}">${r.active?'Desactivar':'Activar'}</button></div>`).join(''):'<div class="empty">Sin salas.</div>';
   $('roomAdminList').querySelectorAll('.roomToggle').forEach(b=>b.onclick=()=>toggleRoom(b.dataset.id,b.dataset.active==='true'));
+  $('vehicleAdminList').innerHTML=vehicles.length?vehicles.map(v=>`<div class="mini-row"><span>${esc(v.name)}${v.plate?`<br><small>${esc(v.plate)}</small>`:''} ${v.active?'':'(inactivo)'}</span><button class="btn-secondary btn-small vehicleToggle" data-id="${v.id}" data-active="${v.active}">${v.active?'Desactivar':'Activar'}</button></div>`).join(''):'<div class="empty">Sin vehículos.</div>';
+  $('vehicleAdminList').querySelectorAll('.vehicleToggle').forEach(b=>b.onclick=()=>toggleVehicle(b.dataset.id,b.dataset.active==='true'));
   $('recipientAdminList').innerHTML=recipients.length?recipients.map(r=>`<div class="mini-row"><span>${esc(r.email)} ${r.active?'':'(inactivo)'}</span><button class="btn-secondary btn-small recToggle" data-id="${r.id}" data-active="${r.active}">${r.active?'Desactivar':'Activar'}</button></div>`).join(''):'<div class="empty">Sin correos.</div>';
   $('recipientAdminList').querySelectorAll('.recToggle').forEach(b=>b.onclick=()=>toggleRecipient(b.dataset.id,b.dataset.active==='true'));
   $('userAdminList').innerHTML=profiles.length?profiles.map(p=>`<div class="mini-row"><span title="${esc(p.email)}">${esc(p.full_name||p.email)}<br><small>${esc(p.role)}</small></span>${p.id===session.user.id?'<span class="muted">Usted</span>':`<button class="btn-secondary btn-small roleToggle" data-id="${p.id}" data-role="${p.role}">${p.role==='admin'?'Hacer docente':'Hacer admin'}</button>`}</div>`).join(''):'<div class="empty">Sin usuarios.</div>';
@@ -364,21 +216,15 @@ function renderAdmin(){
 
 $('addRoomBtn').onclick=async()=>{const name=$('newRoomName').value.trim();if(!name)return;const {error}=await sb.from('classrooms').insert({name});if(error)return alert(error.message);$('newRoomName').value='';await loadData()};
 async function toggleRoom(id,active){const {error}=await sb.from('classrooms').update({active:!active}).eq('id',id);if(error)alert(error.message);else await loadData()}
+$('addVehicleBtn').onclick=async()=>{const name=$('newVehicleName').value.trim(),plate=$('newVehiclePlate').value.trim();if(!name)return alert('Escriba un nombre o identificador para el vehículo.');const {error}=await sb.from('vehicles').insert({name,plate:plate||null});if(error)return alert(error.message);$('newVehicleName').value='';$('newVehiclePlate').value='';await loadData()};
+async function toggleVehicle(id,active){const {error}=await sb.from('vehicles').update({active:!active}).eq('id',id);if(error)alert(error.message);else await loadData()}
 $('addRecipientBtn').onclick=async()=>{const email=$('newRecipientEmail').value.trim().toLowerCase();if(!email)return;const {error}=await sb.from('notification_recipients').insert({email,label:null});if(error)return alert(error.message);$('newRecipientEmail').value='';await loadData()};
 async function toggleRecipient(id,active){const {error}=await sb.from('notification_recipients').update({active:!active}).eq('id',id);if(error)alert(error.message);else await loadData()}
 async function setRole(id,role){if(!confirm(`¿Cambiar esta cuenta a ${role==='admin'?'Administrador':'Docente'}?`))return;const {error}=await sb.rpc('admin_set_user_role',{p_user_id:id,p_role:role});if(error)alert(error.message);else await loadData()}
 
-function renderAll(){
-  if(!session)return;renderRoomOptions();updateTypeFields();renderCalendar();renderList();renderAdmin();
-  $('adminSection').classList.toggle('hidden',!isAdmin());
-  if(!$('startDate').value){const today=crDateKey(new Date());$('startDate').value=today;$('endDate').value=today;$('startTime').value='08:00';$('endTime').value='10:00'}
-  if(!$('responsible').value)$('responsible').value=profile?.full_name||'';
-}
+function renderAll(){if(!session)return;renderTypeOptions();renderResourceOptions();updateTypeFields();renderCalendar();renderList();renderAdmin();$('adminSection').classList.toggle('hidden',!isAdmin());if(!$('startDate').value){const today=crDateKey(new Date());$('startDate').value=today;$('endDate').value=today;$('startTime').value='08:00';$('endTime').value='10:00'}if(!$('responsible').value)$('responsible').value=profile?.full_name||''}
 
-$('prevMonth').onclick=()=>{currentMonth--;if(currentMonth<0){currentMonth=11;currentYear--}renderCalendar()};
-$('nextMonth').onclick=()=>{currentMonth++;if(currentMonth>11){currentMonth=0;currentYear++}renderCalendar()};
-$('todayBtn').onclick=()=>{const n=new Date();currentYear=n.getFullYear();currentMonth=n.getMonth();renderCalendar()};
-$('refreshBtn').onclick=loadData;$('filterType').onchange=renderCalendar;$('filterRoom').onchange=renderCalendar;$('filterLevel').onchange=renderCalendar;$('listFilter').onchange=renderList;
+$('prevMonth').onclick=()=>{currentMonth--;if(currentMonth<0){currentMonth=11;currentYear--}renderCalendar()};$('nextMonth').onclick=()=>{currentMonth++;if(currentMonth>11){currentMonth=0;currentYear++}renderCalendar()};$('todayBtn').onclick=()=>{const n=new Date();currentYear=n.getFullYear();currentMonth=n.getMonth();renderCalendar()};$('refreshBtn').onclick=loadData;$('filterType').onchange=renderCalendar;$('filterRoom').onchange=renderCalendar;$('filterVehicle').onchange=renderCalendar;$('filterLevel').onchange=renderCalendar;$('listFilter').onchange=renderList;
 
 init();
 })();
